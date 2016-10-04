@@ -55,6 +55,9 @@ namespace CoffeeApp.Droid
             //Click events can be done in line with lambdas
             searchButton.Click += async (sender, args) =>
             {
+                if (map == null)
+                    return;
+
                 searchButton.Enabled = false;
 
                 var center = map.CameraPosition.Target;
