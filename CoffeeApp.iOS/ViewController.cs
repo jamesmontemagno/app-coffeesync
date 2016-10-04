@@ -29,7 +29,7 @@ namespace CoffeeApp
                 ButtonSearch.Enabled = false;
 
                 var center = MyMap.Region.Center;
-
+				ActivityIsLoading.StartAnimating();
 
                 await UIView.AnimateAsync(1.0,
                     () => MyMap.Alpha = 0);
@@ -52,11 +52,30 @@ namespace CoffeeApp
                     () => MyMap.Alpha = 1);
 
                 ButtonSearch.Enabled = true;
-
+				ActivityIsLoading.StopAnimating();
             };
+
+			ButtonSave.TouchUpInside += async (sender, e) =>
+			{
+				ActivityIsLoading.StartAnimating();
+				var selected = MyMap.SelectedAnnotations.FirstOrDefault();
+
+				if (selected == null)
+					return;
+				
+				ButtonSave.Enabled = false;
+
+				await AzureService.Instance.AddCoffee(selected.GetTitle(), selected.Coordinate.Latitude, selected.Coordinate.Longitude);
+
+				new UIAlertView("Saved!", "Item has been saved", null, "OK").Show();
+
+				ButtonSave.Enabled = true;
+				ActivityIsLoading.StopAnimating();
+			};
 
             ButtonLoad.TouchUpInside += async (sender, args) =>
             {
+				ActivityIsLoading.StartAnimating();
                 ButtonLoad.Enabled = false;
                 MyMap.RemoveAnnotations(MyMap.Annotations);
 
@@ -72,6 +91,7 @@ namespace CoffeeApp
 
                 }
                 ButtonLoad.Enabled = true;
+				ActivityIsLoading.StopAnimating();
             };
             
 

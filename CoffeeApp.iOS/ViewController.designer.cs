@@ -1,4 +1,4 @@
-﻿// WARNING
+// WARNING
 //
 // This file has been generated automatically by Xamarin Studio from the outlets and
 // actions declared in your storyboard file.
@@ -16,7 +16,15 @@ namespace CoffeeApp
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIActivityIndicatorView ActivityIsLoading { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton ButtonLoad { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton ButtonSave { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -32,9 +40,19 @@ namespace CoffeeApp
 
         void ReleaseDesignerOutlets ()
         {
+            if (ActivityIsLoading != null) {
+                ActivityIsLoading.Dispose ();
+                ActivityIsLoading = null;
+            }
+
             if (ButtonLoad != null) {
                 ButtonLoad.Dispose ();
                 ButtonLoad = null;
+            }
+
+            if (ButtonSave != null) {
+                ButtonSave.Dispose ();
+                ButtonSave = null;
             }
 
             if (ButtonSearch != null) {
