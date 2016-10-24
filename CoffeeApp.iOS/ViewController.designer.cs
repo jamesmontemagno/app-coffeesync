@@ -1,4 +1,4 @@
-// WARNING
+﻿// WARNING
 //
 // This file has been generated automatically by Xamarin Studio from the outlets and
 // actions declared in your storyboard file.
@@ -20,19 +20,7 @@ namespace CoffeeApp
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton ButtonLoad { get; set; }
-
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIButton ButtonSave { get; set; }
-
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton ButtonSearch { get; set; }
-
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        MapKit.MKMapView MyMap { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -45,24 +33,9 @@ namespace CoffeeApp
                 ActivityIsLoading = null;
             }
 
-            if (ButtonLoad != null) {
-                ButtonLoad.Dispose ();
-                ButtonLoad = null;
-            }
-
-            if (ButtonSave != null) {
-                ButtonSave.Dispose ();
-                ButtonSave = null;
-            }
-
             if (ButtonSearch != null) {
                 ButtonSearch.Dispose ();
                 ButtonSearch = null;
-            }
-
-            if (MyMap != null) {
-                MyMap.Dispose ();
-                MyMap = null;
             }
 
             if (TextFieldQuery != null) {

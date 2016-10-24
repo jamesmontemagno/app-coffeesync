@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="14">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
@@ -17,9 +17,6 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" id="80" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="0.0" y="151" width="600" height="449"/>
-                            </mapView>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Text" borderStyle="roundedRect" minimumFontSize="17" id="83" translatesAutoresizingMaskIntoConstraints="NO">
                                 <rect key="frame" x="20" y="75" width="453" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -34,49 +31,24 @@
                                     <constraint id="96" firstItem="84" firstAttribute="width" constant="71"/>
                                 </constraints>
                             </button>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="85" misplaced="YES">
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="85">
                                 <rect key="frame" x="481" y="80" width="20" height="20"/>
                             </activityIndicatorView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="86" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="20" y="113" width="275" height="30"/>
-                                <state key="normal" title="Load">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="87" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="303" y="113" width="277" height="30"/>
-                                <state key="normal" title="Save">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
                         </subviews>
                         <constraints>
                             <constraint id="93" firstItem="8bC-Xf-vdC" firstAttribute="trailing" secondItem="84" secondAttribute="trailing" constant="20"/>
                             <constraint id="94" firstItem="84" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="11"/>
                             <constraint id="95" firstItem="84" firstAttribute="leading" secondItem="85" secondAttribute="centerX" constant="18"/>
-                            <constraint id="97" firstItem="80" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing"/>
-                            <constraint id="98" firstItem="80" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom"/>
-                            <constraint id="99" firstItem="80" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading"/>
-                            <constraint id="100" firstItem="80" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="87"/>
-                            <constraint id="101" firstItem="8bC-Xf-vdC" firstAttribute="trailing" secondItem="87" secondAttribute="trailing" constant="20"/>
-                            <constraint id="102" firstItem="87" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="49"/>
-                            <constraint id="104" firstItem="80" firstAttribute="top" secondItem="87" secondAttribute="bottom" constant="8"/>
-                            <constraint id="108" firstItem="80" firstAttribute="centerX" secondItem="86" secondAttribute="trailing" constant="5"/>
-                            <constraint id="109" firstItem="87" firstAttribute="leading" secondItem="80" secondAttribute="centerX" constant="3"/>
-                            <constraint id="110" firstItem="86" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="49"/>
-                            <constraint id="111" firstItem="86" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20"/>
                             <constraint id="112" firstItem="85" firstAttribute="centerX" secondItem="83" secondAttribute="trailing" constant="18"/>
                             <constraint id="113" firstItem="83" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20"/>
                             <constraint id="114" firstItem="83" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="11"/>
+                            <constraint id="119" firstItem="85" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="16"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="ButtonSearch" destination="84" id="name-outlet-84"/>
                         <outlet property="ActivityIsLoading" destination="85" id="name-outlet-85"/>
                         <outlet property="TextFieldQuery" destination="83" id="name-outlet-83"/>
-                        <outlet property="MyMap" destination="80" id="name-outlet-80"/>
-                        <outlet property="ButtonLoad" destination="86" id="name-outlet-86"/>
-                        <outlet property="ButtonSave" destination="87" id="name-outlet-87"/>
                     </connections>
                     <navigationItem title="Coffee App" id="62" key="navigationItem"/>
                 </viewController>

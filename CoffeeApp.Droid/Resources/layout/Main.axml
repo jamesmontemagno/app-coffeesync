@@ -8,37 +8,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minWidth="25px"
-        android:minHeight="25px">
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/editText1"
-            android:layout_weight="1" />
-        <Button
-            android:text="Search"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/button_search" />
-    </LinearLayout>
+        android:minHeight="25px" />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minWidth="25px"
-        android:minHeight="25px">
-        <Button
-            android:text="Load"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/button_load" />
-        <Button
-            android:text="Save"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/button_save" />
-    </LinearLayout>
+        android:minHeight="25px" />
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"

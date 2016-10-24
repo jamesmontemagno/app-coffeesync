@@ -349,20 +349,8 @@ namespace CoffeeApp.Droid
 			// aapt resource value: 0x7f08000a
 			public const int auto = 2131230730;
 			
-			// aapt resource value: 0x7f08000f
-			public const int button_load = 2131230735;
-			
-			// aapt resource value: 0x7f080010
-			public const int button_save = 2131230736;
-			
-			// aapt resource value: 0x7f08000e
-			public const int button_search = 2131230734;
-			
 			// aapt resource value: 0x7f08000b
 			public const int dark = 2131230731;
-			
-			// aapt resource value: 0x7f08000d
-			public const int editText1 = 2131230733;
 			
 			// aapt resource value: 0x7f080000
 			public const int hybrid = 2131230720;
@@ -373,8 +361,8 @@ namespace CoffeeApp.Droid
 			// aapt resource value: 0x7f08000c
 			public const int light = 2131230732;
 			
-			// aapt resource value: 0x7f080011
-			public const int map = 2131230737;
+			// aapt resource value: 0x7f08000d
+			public const int map = 2131230733;
 			
 			// aapt resource value: 0x7f080001
 			public const int none = 2131230721;
