@@ -17,7 +17,7 @@ namespace CoffeeApp.Logic
 {
     public class CoffeesViewModel
     {
-        const string SearchQueryUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&location={1},{2}&radius=1000&opennow=true&key={3}";
+        const string SearchQueryUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json?query={0}&location={1},{2}&radius=1000&key={3}";
 
 
         public bool IsBusy { get; set; }

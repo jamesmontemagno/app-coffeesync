@@ -30,9 +30,7 @@ namespace CoffeeApp
             //Create our client
             Client = new MobileServiceClient(appUrl);
 
-            //InitialzeDatabase for path
-            var path = InitializeDatabase();
-
+            var path = "syncstore.db";
             //setup our local sqlite store and intialize our table
             var store = new MobileServiceSQLiteStore(path);
 
@@ -46,34 +44,12 @@ namespace CoffeeApp
             coffeeTable = Client.GetSyncTable<Coffee>();
         }
 
-        private string InitializeDatabase()
-        {
-#if __ANDROID__ || __IOS__
-            Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
-#endif
-            SQLitePCL.Batteries.Init();
-
-            var path = "syncstore2.db";
-
-#if __ANDROID__
-            path = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), path);
-
-            if (!File.Exists(path))
-            {
-                File.Create(path).Dispose();
-            }
-#endif
-
-            return path;
-        }
-
-
 
         public async Task<IEnumerable<Coffee>> GetCoffees()
         {
             await Initialize();
             await SyncCoffee();
-            return await coffeeTable.ToEnumerableAsync();
+            return await coffeeTable.OrderBy(c=>c.Name).ToEnumerableAsync();
         }
 
         public async Task<Coffee> AddCoffee(string name, double lat, double lng)

@@ -23,7 +23,6 @@ namespace CoffeeApp
             // If not required for your application you can safely delete this method
 
             Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
-            SQLitePCL.CurrentPlatform.Init();
 
             return true;
         }

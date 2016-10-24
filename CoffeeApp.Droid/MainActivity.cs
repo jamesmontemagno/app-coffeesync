@@ -31,6 +31,8 @@ namespace CoffeeApp.Droid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
+            Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
+
             viewModel = new CoffeesViewModel();
 
             handler = new Handler();
