@@ -24,22 +24,17 @@ namespace CoffeeApp
             viewModel = new CoffeesViewModel();
 
 
-            
-           
-            ZoomToSeattle();
-         }
 
-
-        void ZoomToSeattle()
-        {
 
             var coords = new CLLocationCoordinate2D(47.6062, -122.3321);
             var span = new MKCoordinateSpan(DistanceUtils.MilesToLatitudeDegrees(20),
                 DistanceUtils.MilesToLongitudeDegrees(20, coords.Latitude));
 
-            MyMap.Region = new MKCoordinateRegion(coords, span);
+            //MyMap.Region = new MKCoordinateRegion(coords, span);
         }
 
+
+       
        
 
         public override void DidReceiveMemoryWarning()
