@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
 using Microsoft.WindowsAzure.MobileServices.SQLiteStore;
 using Microsoft.WindowsAzure.MobileServices.Sync;
+using Plugin.Connectivity;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,10 +22,12 @@ namespace CoffeeApp
 
         public async Task Initialize()
         {
+            CurrentPlatform.Init();
+
             if (Client?.SyncContext?.IsInitialized ?? false)
                 return;
 
-            var appUrl = "https://motzcoffee.azurewebsites.net";
+            var appUrl = "https://YOUR-BACKEND-HERE.azurewebsites.net";
 
 
             //Create our client
@@ -38,10 +41,12 @@ namespace CoffeeApp
             store.DefineTable<Coffee>();
 
             //Initialize SyncContext
-            await Client.SyncContext.InitializeAsync(store, new MobileServiceSyncHandler());
+            await Client.SyncContext.InitializeAsync(store);
 
             //Get our sync table that will call out to azure
             coffeeTable = Client.GetSyncTable<Coffee>();
+
+           
         }
 
 
@@ -76,6 +81,9 @@ namespace CoffeeApp
         {
             try
             {
+                if (!CrossConnectivity.Current.IsConnected)
+                    return;
+
                 //pull down all latest changes and then push current coffees up
                 await Client.SyncContext.PushAsync();
                 await coffeeTable.PullAsync("allCoffees", coffeeTable.CreateQuery());

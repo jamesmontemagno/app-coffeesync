@@ -1,8 +1,4 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CoffeeApp
 {
@@ -12,5 +8,10 @@ namespace CoffeeApp
         public string Name { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+
+        public float Stars { get; set; }
+
+        [Microsoft.WindowsAzure.MobileServices.Version]
+        public string AzureVersion { get; set; }
     }
 }

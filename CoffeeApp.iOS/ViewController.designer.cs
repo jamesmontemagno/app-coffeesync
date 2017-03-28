@@ -16,7 +16,11 @@ namespace CoffeeApp
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIActivityIndicatorView ActivityIsLoading { get; set; }
+        UIKit.UIButton ButtonLoad { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIButton ButtonSave { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -24,18 +28,41 @@ namespace CoffeeApp
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        MapKit.MKMapView MyMap { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIActivityIndicatorView ProgressBar { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField TextFieldQuery { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
-            if (ActivityIsLoading != null) {
-                ActivityIsLoading.Dispose ();
-                ActivityIsLoading = null;
+            if (ButtonLoad != null) {
+                ButtonLoad.Dispose ();
+                ButtonLoad = null;
+            }
+
+            if (ButtonSave != null) {
+                ButtonSave.Dispose ();
+                ButtonSave = null;
             }
 
             if (ButtonSearch != null) {
                 ButtonSearch.Dispose ();
                 ButtonSearch = null;
+            }
+
+            if (MyMap != null) {
+                MyMap.Dispose ();
+                MyMap = null;
+            }
+
+            if (ProgressBar != null) {
+                ProgressBar.Dispose ();
+                ProgressBar = null;
             }
 
             if (TextFieldQuery != null) {
