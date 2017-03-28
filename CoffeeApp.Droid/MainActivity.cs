@@ -3,6 +3,7 @@ using Android.App;
 using Android.Widget;
 using Android.OS;
 
+
 using System.Linq;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
@@ -10,11 +11,13 @@ using Android.Locations;
 
 using CoffeeApp.Logic;
 using System.Collections.Generic;
+using Acr.UserDialogs;
+using Android.Support.V7.App;
 
 namespace CoffeeApp.Droid
 {
     [Activity(Label = "Coffee App", MainLauncher = true, Icon = "@drawable/icon")]
-    public class MainActivity : Activity, IOnMapReadyCallback
+    public class MainActivity : AppCompatActivity, IOnMapReadyCallback
     {
 
         GoogleMap map;
@@ -24,35 +27,36 @@ namespace CoffeeApp.Droid
         CoffeesViewModel viewModel;
         EditText query;
         Button searchButton, saveButton, loadButton;
+        ProgressBar progress;
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
-
-            Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
+            var toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
+            
+            SetSupportActionBar(toolbar);
+            
 
             viewModel = new CoffeesViewModel();
 
-            handler = new Handler();
-            
-            //load map
-            mapFragment = FragmentManager.FindFragmentById<MapFragment>(Resource.Id.map);
-            mapFragment.GetMapAsync(this);
+            viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            viewModel.Places.CollectionChanged += Places_CollectionChanged;
 
-            //Find all items on the UI
-            query = FindViewById<EditText>(Resource.Id.editText1);
+
+            //Setup UI here
+            query = FindViewById<EditText>(Resource.Id.edittext_query);
             searchButton = FindViewById<Button>(Resource.Id.button_search);
-
+            progress = FindViewById<ProgressBar>(Resource.Id.progressbar_loading);
 
             loadButton = FindViewById<Button>(Resource.Id.button_load);
             saveButton = FindViewById<Button>(Resource.Id.button_save);
 
             //normal click handlers here.
-            loadButton.Click += Load_Click;
-
-            saveButton.Click += Save_Click;
+            loadButton.Click += LoadButton_Click;
+            saveButton.Click += SaveButton_Click;
 
             //Click events can be done in line with lambdas
             searchButton.Click += async (sender, args) =>
@@ -60,50 +64,67 @@ namespace CoffeeApp.Droid
                 if (map == null)
                     return;
 
-                searchButton.Enabled = false;
-
                 var center = map.CameraPosition.Target;
 
-                var places = await viewModel.SearchForPlaces(center.Latitude, center.Longitude, query.Text);
+                await viewModel.SearchForPlaces(center.Latitude, center.Longitude, query.Text);
 
+            };
+
+
+
+            //load map
+            mapFragment = FragmentManager.FindFragmentById<MapFragment>(Resource.Id.map);
+            mapFragment.GetMapAsync(this);
+
+            UserDialogs.Init(this);
+        }
+
+        
+
+        private void Places_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RunOnUiThread(() =>
+            {
                 map.Clear();
 
-                //load existing coffees from azure
-                if(coffees != null)
+                foreach (var place in viewModel.Places)
                 {
-                    foreach (var coffee in coffees)
-                        AddMarker(coffee.Latitude, coffee.Longitude, coffee.Name);
+
+                    var color = BitmapDescriptorFactory.HueGreen;
+                    if (place.Stars < 3.5)
+                        color = BitmapDescriptorFactory.HueRed;
+                    else if (place.Stars < 4.3)
+                        color = BitmapDescriptorFactory.HueMagenta;
+
+                    var marker = new MarkerOptions()
+                        .SetPosition(new LatLng(place.Latitude, place.Longitude))
+                        .SetTitle(place.Name)
+                        .SetSnippet($"{place.Stars} / 5 stars")
+                        .SetIcon(BitmapDescriptorFactory.DefaultMarker(color));
+
+
+
+                    map.AddMarker(marker);
                 }
+            });
+        }
 
-                //load new places
-                foreach(var place in places)
-                    AddMarker(place.Latitude, place.Longitude, place.Name);
-
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (viewModel.IsBusy)
+            {
+                searchButton.Enabled = false;
+                progress.Visibility = Android.Views.ViewStates.Visible;
+            }
+            else
+            {
                 searchButton.Enabled = true;
-            };
-           
+                progress.Visibility = Android.Views.ViewStates.Invisible;
+            }
         }
 
-        private async void Save_Click(object sender, EventArgs e)
-        {
-            if (selectedMarker == null)
-                return;
-
-            await AzureService.Instance.AddCoffee(selectedMarker.Title, selectedMarker.Position.Latitude, selectedMarker.Position.Longitude);
-            Toast.MakeText(this, "Saved!!!!", ToastLength.Short).Show();
-        }
-
-        private async void Load_Click(object sender, EventArgs e)
-        {
-            if (map == null)
-                return;
-
-            map.Clear();
-            coffees = await AzureService.Instance.GetCoffees();
-            foreach (var item in coffees)
-                AddMarker(item.Latitude, item.Longitude, item.Name);
-        }
-
+        #region Map Ready Code
+        private Marker selectedMarker;
         public void OnMapReady(GoogleMap googleMap)
         {
             if (googleMap == null)
@@ -111,9 +132,12 @@ namespace CoffeeApp.Droid
 
             map = googleMap;
 
-            map.MarkerClick += Map_MarkerClick;
+            map.UiSettings.ZoomControlsEnabled = true;
+            map.UiSettings.ZoomGesturesEnabled = true;
 
-            handler.PostDelayed(ZoomToSeattle, 1000);
+            map.MarkerClick += Map_MarkerClick;
+            handler = new Handler();
+            handler.PostDelayed(ZoomToLocation, 1000);
         }
 
         private void Map_MarkerClick(object sender, GoogleMap.MarkerClickEventArgs e)
@@ -124,35 +148,35 @@ namespace CoffeeApp.Droid
             selectedMarker = e.Marker;
             selectedMarker.ShowInfoWindow();
         }
-
-        IEnumerable<Coffee> coffees;
-        private Marker selectedMarker;
-
-        void AddMarker(double lat, double lng, string title)
+        void ZoomToLocation()
         {
-            if (map == null)
-                return;
 
-
-            var marker = new MarkerOptions()
-                .SetPosition(new LatLng(lat, lng))
-                .SetTitle(title);
-            map.AddMarker(marker);
-
-        }
-
-
-        void ZoomToSeattle()
-        {
-           
-            var location = new LatLng(47.6062, -122.3321);
+            var location = new LatLng(App.StartLat, App.StartLong);
             var builder = CameraPosition.InvokeBuilder()
                 .Target(location)
                 .Zoom(14);
 
             var cameraUpdate = CameraUpdateFactory.NewCameraPosition(builder.Build());
-            RunOnUiThread(()=>map?.MoveCamera(cameraUpdate));
+            RunOnUiThread(() => map?.MoveCamera(cameraUpdate));
         }
+        #endregion   
+
+        private async void SaveButton_Click(object sender, EventArgs e)
+        {
+            if (selectedMarker == null)
+                return;
+
+            await viewModel.SaveCoffee(selectedMarker.Title, selectedMarker.Position.Latitude, selectedMarker.Position.Longitude);
+        }
+
+
+        private async void LoadButton_Click(object sender, EventArgs e)
+        {
+            await viewModel.LoadCoffees();
+        }
+
+          
+        
     }
 }
 

@@ -1,4 +1,4 @@
-// WARNING
+﻿// WARNING
 //
 // This file has been generated automatically by Xamarin Studio from the outlets and
 // actions declared in your storyboard file.
@@ -14,10 +14,6 @@ namespace CoffeeApp
     [Register ("ViewController")]
     partial class ViewController
     {
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIActivityIndicatorView ActivityIsLoading { get; set; }
-
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UIButton ButtonLoad { get; set; }
@@ -36,15 +32,14 @@ namespace CoffeeApp
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIActivityIndicatorView ProgressBar { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITextField TextFieldQuery { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
-            if (ActivityIsLoading != null) {
-                ActivityIsLoading.Dispose ();
-                ActivityIsLoading = null;
-            }
-
             if (ButtonLoad != null) {
                 ButtonLoad.Dispose ();
                 ButtonLoad = null;
@@ -63,6 +58,11 @@ namespace CoffeeApp
             if (MyMap != null) {
                 MyMap.Dispose ();
                 MyMap = null;
+            }
+
+            if (ProgressBar != null) {
+                ProgressBar.Dispose ();
+                ProgressBar = null;
             }
 
             if (TextFieldQuery != null) {

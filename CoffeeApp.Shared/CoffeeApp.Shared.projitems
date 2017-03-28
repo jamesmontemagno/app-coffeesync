@@ -9,6 +9,7 @@
     <Import_RootNamespace>CoffeeApp</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\DistanceUtils.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\Azure\AzureService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\Azure\Coffee.cs" />

@@ -6,10 +6,11 @@ using MapKit;
 using CoreLocation;
 using CoffeeApp.Logic;
 using System.Threading.Tasks;
+using Foundation;
 
 namespace CoffeeApp
 {
-    public partial class ViewController : UIViewController
+    public partial class ViewController : UIViewController, IMKMapViewDelegate
     {
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -20,117 +21,103 @@ namespace CoffeeApp
         {
             base.ViewDidLoad();
 
+            MyMap.WeakDelegate = this;
+
+            ButtonLoad.Hidden = true;
+            ButtonSave.Hidden = true;
            
             viewModel = new CoffeesViewModel();
 
+            viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            viewModel.Places.CollectionChanged += Places_CollectionChanged;
 
-            ButtonSearch.TouchUpInside += async (sender, args) =>
-            {
-                ButtonSearch.Enabled = false;
-
-                var center = MyMap.Region.Center;
-				ActivityIsLoading.StartAnimating();
-
-                await UIView.AnimateAsync(1.0,
-                    () => MyMap.Alpha = 0);
-
-                MyMap.RemoveAnnotations(MyMap.Annotations);
-
-                var places = await viewModel.SearchForPlaces(center.Latitude, center.Longitude, TextFieldQuery.Text);
-
-                foreach(var item in places)
-                {
-                    MyMap.AddAnnotation(new MKPointAnnotation
-                    {
-                        Title = item.Name,
-                        Coordinate = new CLLocationCoordinate2D(item.Latitude, item.Longitude)
-                    });
-
-                }
-
-                await UIView.AnimateAsync(1.0,
-                    () => MyMap.Alpha = 1);
-
-                ButtonSearch.Enabled = true;
-				ActivityIsLoading.StopAnimating();
-            };
-
-			ButtonSave.TouchUpInside += async (sender, e) =>
-			{
-				ActivityIsLoading.StartAnimating();
-				var selected = MyMap.SelectedAnnotations.FirstOrDefault();
-
-				if (selected == null)
-					return;
-				
-				ButtonSave.Enabled = false;
-
-				await AzureService.Instance.AddCoffee(selected.GetTitle(), selected.Coordinate.Latitude, selected.Coordinate.Longitude);
-
-				new UIAlertView("Saved!", "Item has been saved", null, "OK").Show();
-
-				ButtonSave.Enabled = true;
-				ActivityIsLoading.StopAnimating();
-			};
-
-            ButtonLoad.TouchUpInside += async (sender, args) =>
-            {
-				ActivityIsLoading.StartAnimating();
-                ButtonLoad.Enabled = false;
-                MyMap.RemoveAnnotations(MyMap.Annotations);
-
-                var places = await AzureService.Instance.GetCoffees();
-
-                foreach (var item in places)
-                {
-                    MyMap.AddAnnotation(new MKPointAnnotation
-                    {
-                        Title = item.Name,
-                        Coordinate = new CLLocationCoordinate2D(item.Latitude, item.Longitude)
-                    });
-
-                }
-                ButtonLoad.Enabled = true;
-				ActivityIsLoading.StopAnimating();
-            };
+            ButtonSearch.TouchUpInside += ButtonSearch_TouchUpInside;
+            ButtonLoad.TouchUpInside += ButtonLoad_TouchUpInside;
+            ButtonSave.TouchUpInside += ButtonSave_TouchUpInside;
             
-
-           
-            ZoomToSeattle();
-         }
-
-
-        void ZoomToSeattle()
-        {
-
-            var coords = new CLLocationCoordinate2D(47.6062, -122.3321);
-            var span = new MKCoordinateSpan(DistanceUtils.MilesToLatitudeDegrees(20),
-                DistanceUtils.MilesToLongitudeDegrees(20, coords.Latitude));
+            var coords = new CLLocationCoordinate2D(App.StartLat, App.StartLong);
+            var span = new MKCoordinateSpan(DistanceUtils.MilesToLatitudeDegrees(10),
+                DistanceUtils.MilesToLongitudeDegrees(10, coords.Latitude));
 
             MyMap.Region = new MKCoordinateRegion(coords, span);
         }
 
        
 
-        public override void DidReceiveMemoryWarning()
+        private async void ButtonSearch_TouchUpInside(object sender, EventArgs e)
         {
-            base.DidReceiveMemoryWarning();
-            // Release any cached data, images, etc that aren't in use.
+            await viewModel.SearchForPlaces(
+                MyMap.Region.Center.Latitude,
+                MyMap.Region.Center.Longitude,
+                TextFieldQuery.Text);
+        }
+        
+        private void Places_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            MyMap.RemoveAnnotations(MyMap.Annotations);
+            MyMap.AddAnnotations(viewModel.Places.Select(place => new MKPointAnnotation
+            {
+                Coordinate = new CLLocationCoordinate2D(place.Latitude, place.Longitude),
+                Title = place.Name,
+                Subtitle = $"{place.Stars} / 5 stars",
+            }).ToArray());
         }
 
-        public async Task<string> GetNameForLocation(double latitude, double longitude)
+        [Export("mapView:viewForAnnotation:")]
+        public MKAnnotationView GetViewForAnnotation(MKMapView mapView, IMKAnnotation annotation)
         {
+            var pinView = mapView.DequeueReusableAnnotation("colorpin") as MKPinAnnotationView;
+            if(pinView == null)
+            {
+                pinView = new MKPinAnnotationView(annotation, "colorpin")
+                {
+                    CanShowCallout = true,
+                };
+            }
+            else
+            {
+                pinView.Annotation = annotation;
+            }
+            var color = MKPinAnnotationColor.Green;
 
-            var coder = new CLGeocoder();
+            var place = viewModel.Places.First(p => p.Latitude == annotation.Coordinate.Latitude && p.Longitude == annotation.Coordinate.Longitude && p.Name == annotation.GetTitle());
+            if (place.Stars < 3.5)
+                color = MKPinAnnotationColor.Red;
+            else if (place.Stars < 4.3)
+                color = MKPinAnnotationColor.Purple;
 
-            var locations = await coder.ReverseGeocodeLocationAsync(new CLLocation
-                (latitude, longitude));
+            pinView.PinColor = color;
 
-            var name = locations?.FirstOrDefault()?.Name ?? "unknown";
-            
-
-            return name;
+            return pinView;
         }
 
+
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (viewModel.IsBusy)
+            {
+                ButtonSearch.Enabled = false;
+                ProgressBar.StartAnimating();
+            }
+            else
+            {
+                ButtonSearch.Enabled = true;
+                ProgressBar.StopAnimating();
+            }
+        }
+
+        private async void ButtonSave_TouchUpInside(object sender, EventArgs e)
+        {
+            if (MyMap.SelectedAnnotations.Length == 0)
+                return;
+
+            var item = MyMap.SelectedAnnotations[0];
+            await viewModel.SaveCoffee(item.GetTitle(), item.Coordinate.Latitude, item.Coordinate.Longitude);
+        }
+
+        private async void ButtonLoad_TouchUpInside(object sender, EventArgs e)
+        {
+            await viewModel.LoadCoffees();
+        }
     }
 }

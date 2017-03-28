@@ -2,18 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minWidth="25px"
-        android:minHeight="25px">
-        <EditText
+        android:padding="4dp">
+        <android.support.design.widget.TextInputLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:id="@+id/editText1"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/edittext_query"
+                android:layout_width="match_parent"
+                android:hint="search for things!"
+                android:layout_height="wrap_content" />
+        </android.support.design.widget.TextInputLayout>
+        <ProgressBar
+          android:id="@+id/progressbar_loading"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          style="?android:attr/android:progressBarStyleSmall"
+          android:indeterminate="true" 
+          android:visibility="gone"/>
         <Button
             android:text="Search"
             android:layout_width="wrap_content"
@@ -25,7 +42,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minWidth="25px"
-        android:minHeight="25px">
+        android:minHeight="25px"
+        android:visibility="gone"
+        android:padding="4dp">
         <Button
             android:text="Load"
             android:layout_weight="1"
